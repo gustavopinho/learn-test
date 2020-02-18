@@ -1,13 +1,13 @@
 package com.gustavopinho.java.entities;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.core.api.annotation.Inject;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +17,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.UserTransaction;
 
-import static org.junit.Assert.*;
+import java.util.List;
 
 @RunWith(Arquillian.class)
 public class CloudTest {
@@ -81,7 +81,28 @@ public class CloudTest {
     }
 
     @Test
-    public void emptyTest() {
-        System.out.println("Empty test");
+    public void insertionTest() {
+        List<Cloud> cloudList = em.createQuery("select e from Cloud e").getResultList();
+        Assert.assertEquals(LIST_CLOUDS.length, cloudList.size());
+    }
+
+    @Test
+    public void singleResultTest() {
+        Cloud cloud = (Cloud) em.createQuery("select e from Cloud e where e.name = 'Cloud 01'").getSingleResult();
+        Assert.assertEquals("Cloud 01", cloud.getName());
+    }
+
+    @Test
+    public void deletionTest() {
+        List<Cloud> cloudList = em.createQuery("select e from Cloud e").getResultList();
+        for(Cloud cloud : cloudList) {
+            em.remove(cloud);
+        }
+        em.flush();
+        em.clear();
+
+        cloudList = em.createQuery("select e from Cloud e").getResultList();
+        Assert.assertNotEquals(LIST_CLOUDS.length, cloudList.size());
+        Assert.assertEquals(0, cloudList.size());
     }
 }
