@@ -21,6 +21,7 @@
   </dependencyManagement>
 
   <dependencies>
+    <!-- TEST DEPENDENCIES -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -33,9 +34,39 @@
     </dependency>
     <dependency>
       <groupId>org.wildfly.arquillian</groupId>
-      <artifactId>wildfly-arquillian-container-embedded</artifactId>
+      <artifactId>wildfly-arquillian-container-managed</artifactId>
       <version>2.2.0.Final</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/org.jboss.shrinkwrap.resolver/shrinkwrap-resolver-bom -->
+    <dependency>
+      <groupId>org.jboss.shrinkwrap.resolver</groupId>
+      <artifactId>shrinkwrap-resolver-bom</artifactId>
+      <version>3.1.4</version>
+      <type>pom</type>
+    </dependency>
+
+    <!-- PROJECT DEPENDENCIES -->
+    <!-- https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink -->
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>eclipselink</artifactId>
+      <version>2.7.6</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.transaction/javax.transaction-api -->
+    <dependency>
+      <groupId>javax.transaction</groupId>
+      <artifactId>javax.transaction-api</artifactId>
+      <version>1.3</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.enterprise/cdi-api -->
+    <dependency>
+      <groupId>javax.enterprise</groupId>
+      <artifactId>cdi-api</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -73,6 +104,38 @@
           <!-- Fork every test because it will launch a separate AS instance -->
           <forkMode>always</forkMode>
           <redirectTestOutputToFile>false</redirectTestOutputToFile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.7</version>
+        <executions>
+          <execution>
+            <id>copy-configuration-resource</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/wildfly-18.0.1.Final/standalone/configuration</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/test/resources/</directory>
+                  <includes>
+                    <include>test-standalone.xml</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>7</source>
+          <target>7</target>
         </configuration>
       </plugin>
     </plugins>
