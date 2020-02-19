@@ -1,2 +1,2 @@
 # learn-test
-Estudos de teste de unitários em Java
+Estudo de testes unitários em Java
