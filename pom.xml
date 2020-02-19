@@ -37,7 +37,6 @@
       <artifactId>wildfly-arquillian-container-managed</artifactId>
       <version>2.2.0.Final</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/org.jboss.shrinkwrap.resolver/shrinkwrap-resolver-bom -->
     <dependency>
       <groupId>org.jboss.shrinkwrap.resolver</groupId>
       <artifactId>shrinkwrap-resolver-bom</artifactId>
@@ -51,7 +50,7 @@
       <groupId>org.eclipse.persistence</groupId>
       <artifactId>eclipselink</artifactId>
       <version>2.7.6</version>
-      <scope>test</scope>
+      <scope>provided</scope>
     </dependency>
     <!-- https://mvnrepository.com/artifact/javax.transaction/javax.transaction-api -->
     <dependency>
@@ -114,6 +113,40 @@
               </artifactItems>
             </configuration>
           </execution>
+          <execution>
+            <id>copy-db-driver</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.postgresql</groupId>
+                  <artifactId>postgresql</artifactId>
+                  <version>9.2-1004-jdbc4</version>
+                  <outputDirectory>target/wildfly-18.0.1.Final/modules/org/postgresql/main</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-jpa-provider</id>
+            <phase>process-test-classes</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.eclipse.persistence</groupId>
+                  <artifactId>eclipselink</artifactId>
+                  <version>2.7.6</version>
+                  <outputDirectory>target/wildfly-18.0.1.Final/modules/org/eclipse/persistence/main</outputDirectory>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
@@ -142,6 +175,42 @@
                   <directory>${project.basedir}/src/test/resources/</directory>
                   <includes>
                     <include>test-standalone.xml</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-db-module-resource</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/wildfly-18.0.1.Final/modules/org/postgresql/main</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/test/resources/modules/postgressql</directory>
+                  <includes>
+                    <include>module.xml</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-eclipselink-module-resource</id>
+            <phase>process-test-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/wildfly-18.0.1.Final/modules/org/eclipse/persistence/main</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.basedir}/src/test/resources/modules/eclipselink</directory>
+                  <includes>
+                    <include>module.xml</include>
                   </includes>
                 </resource>
               </resources>
